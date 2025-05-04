@@ -1,15 +1,80 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  output   = "./generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("LOCAL_DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  username     String
+  email        String
+  salt         String
+  hash         String
+  bio          String?
+  profilePic   String?
+  isActive     Boolean
+  Posts        Posts[]
+  Likes        Likes[]
+  Comments     Comments[]
+  myRequests   Requests[]    @relation("userA")
+  userRequests Requests[]    @relation("userB")
+  myFriends    FriendsList[] @relation("user")
+  followers    FriendsList[] @relation("friend")
+}
+
+model Posts {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  image       String?
+  time        DateTime   @default(now())
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  Likes       Likes[]
+  Comments    Comments[]
+}
+
+model Likes {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  postId String
+  post   Posts  @relation(fields: [postId], references: [id])
+}
+
+model Comments {
+  id      String   @id @default(uuid())
+  comment String
+  time    DateTime @default(now())
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  postId  String
+  post    Posts    @relation(fields: [postId], references: [id])
+}
+
+model Requests {
+  id      String @id @default(uuid())
+  userAID String
+  userA   User   @relation("userA", fields: [userAID], references: [id])
+  userBID String
+  userB   User   @relation("userB", fields: [userBID], references: [id])
+}
+
+model FriendsList {
+  id      String @id @default(uuid())
+  userAID String
+  userA   User   @relation("user", fields: [userAID], references: [id])
+  userBID String
+  userB   User   @relation("friend", fields: [userBID], references: [id])
+}
+
+model Messages {
+  id      String   @id @default(uuid())
+  message String?
+  image   String?
+  time    DateTime @default(now())
 }

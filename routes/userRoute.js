@@ -1,7 +1,11 @@
 const express = require("express");
 const app = express();
-const allUsers = require("../controllers/allUsers");
+const users = require("../controllers/users");
+const sendRequest = require("../controllers/sendRequest");
+const addFriend = require("../controllers/addFriend");
 
-app.get("/allUsers", allUsers);
+app.get("/users", users);
+app.post("/send-request", sendRequest);
+app.post("/add-friend", addFriend);
 
 module.exports = app;
