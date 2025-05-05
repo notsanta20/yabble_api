@@ -15,6 +15,19 @@ async function sendRequest(req, res) {
   }
 
   try {
+    const verifyUser = await prisma.user.findFirst({
+      where: {
+        id: requestId,
+      },
+    });
+
+    if (!verifyUser) {
+      res
+        .status(400)
+        .json({ status: "failed", message: "user does not exits", data: null });
+      return;
+    }
+
     const checkFriendsList = await prisma.friendsList.findFirst({
       where: {
         OR: [

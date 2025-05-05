@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 async function message(req, res) {
   let { receiverId, message, image } = req.body;
-  const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
+  const id1 = "c4ab95a0-2347-4901-8403-8415690b4a08";
 
   if (typeof receiverId === "undefined") {
     res.status(400).json({
@@ -58,7 +58,8 @@ async function message(req, res) {
     const data = await prisma.messages.create({
       data: {
         senderId: id1,
-        receiverId: requestId,
+        receiverId: receiverId,
+        contactId: contactId.id,
       },
     });
 
