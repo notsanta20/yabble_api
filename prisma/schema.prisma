@@ -20,8 +20,8 @@ model User {
   Posts        Posts[]
   Likes        Likes[]
   Comments     Comments[]
-  myRequests   Requests[]    @relation("userA")
-  userRequests Requests[]    @relation("userB")
+  userRequests Requests[]    @relation("userA")
+  myRequests   Requests[]    @relation("userB")
   myFriends    FriendsList[] @relation("user")
   followers    FriendsList[] @relation("friend")
 }
@@ -32,7 +32,7 @@ model Posts {
   description String?
   image       String?
   time        DateTime   @default(now())
-  user        User       @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   Likes       Likes[]
   Comments    Comments[]
@@ -41,9 +41,9 @@ model Posts {
 model Likes {
   id     String @id @default(uuid())
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId String
-  post   Posts  @relation(fields: [postId], references: [id])
+  post   Posts  @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Comments {
@@ -51,25 +51,25 @@ model Comments {
   comment String
   time    DateTime @default(now())
   userId  String
-  user    User     @relation(fields: [userId], references: [id])
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId  String
-  post    Posts    @relation(fields: [postId], references: [id])
+  post    Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Requests {
   id      String @id @default(uuid())
   userAID String
-  userA   User   @relation("userA", fields: [userAID], references: [id])
+  userA   User   @relation("userA", fields: [userAID], references: [id], onDelete: Cascade)
   userBID String
-  userB   User   @relation("userB", fields: [userBID], references: [id])
+  userB   User   @relation("userB", fields: [userBID], references: [id], onDelete: Cascade)
 }
 
 model FriendsList {
   id      String @id @default(uuid())
   userAID String
-  userA   User   @relation("user", fields: [userAID], references: [id])
+  userA   User   @relation("user", fields: [userAID], references: [id], onDelete: Cascade)
   userBID String
-  userB   User   @relation("friend", fields: [userBID], references: [id])
+  userB   User   @relation("friend", fields: [userBID], references: [id], onDelete: Cascade)
 }
 
 model Messages {

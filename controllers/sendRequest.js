@@ -3,11 +3,12 @@ const prisma = new PrismaClient();
 
 async function sendRequest(req, res) {
   const { requestId } = req.body;
+  const id1 = "1af38ddf-b90f-4816-b0c3-594300b31ae8";
 
   try {
     const data = await prisma.requests.create({
       data: {
-        userAID: "29702e8f-5b0d-4cd0-9c52-24005008d084",
+        userAID: id1,
         userBID: requestId,
       },
     });

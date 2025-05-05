@@ -3,11 +3,12 @@ const prisma = new PrismaClient();
 
 async function addFriend(req, res) {
   const { requestId } = req.body;
+  const id1 = "1af38ddf-b90f-4816-b0c3-594300b31ae8";
 
   try {
     const deleteRequest = await prisma.requests.findFirst({
       where: {
-        userAID: "29702e8f-5b0d-4cd0-9c52-24005008d084",
+        userAID: id1,
         userBID: requestId,
       },
     });
@@ -20,8 +21,8 @@ async function addFriend(req, res) {
 
     const data = await prisma.friendsList.create({
       data: {
-        userAID: requestId,
-        userBID: "29702e8f-5b0d-4cd0-9c52-24005008d084",
+        userAID: id1,
+        userBID: requestId,
       },
     });
 
