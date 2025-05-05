@@ -9,21 +9,23 @@ datasource db {
 }
 
 model User {
-  id           String        @id @default(uuid())
-  username     String
-  email        String
-  salt         String
-  hash         String
-  bio          String?
-  profilePic   String?
-  isActive     Boolean
-  Posts        Posts[]
-  Likes        Likes[]
-  Comments     Comments[]
-  userRequests Requests[]    @relation("userA")
-  myRequests   Requests[]    @relation("userB")
-  myFriends    FriendsList[] @relation("user")
-  followers    FriendsList[] @relation("friend")
+  id              String        @id @default(uuid())
+  username        String
+  email           String
+  salt            String
+  hash            String
+  bio             String?
+  profilePic      String?
+  isActive        Boolean
+  Posts           Posts[]
+  Likes           Likes[]
+  Comments        Comments[]
+  userRequests    Requests[]    @relation("userA")
+  myRequests      Requests[]    @relation("userB")
+  myFriends       FriendsList[] @relation("user")
+  followers       FriendsList[] @relation("friend")
+  messageSent     Messages[]    @relation("sender")
+  messageReceived Messages[]    @relation("receiver")
 }
 
 model Posts {
@@ -58,23 +60,30 @@ model Comments {
 
 model Requests {
   id      String @id @default(uuid())
-  userAID String
-  userA   User   @relation("userA", fields: [userAID], references: [id], onDelete: Cascade)
-  userBID String
-  userB   User   @relation("userB", fields: [userBID], references: [id], onDelete: Cascade)
+  userAId String
+  userA   User   @relation("userA", fields: [userAId], references: [id], onDelete: Cascade)
+  userBId String
+  userB   User   @relation("userB", fields: [userBId], references: [id], onDelete: Cascade)
 }
 
 model FriendsList {
-  id      String @id @default(uuid())
-  userAID String
-  userA   User   @relation("user", fields: [userAID], references: [id], onDelete: Cascade)
-  userBID String
-  userB   User   @relation("friend", fields: [userBID], references: [id], onDelete: Cascade)
+  id       String     @id @default(uuid())
+  userAId  String
+  userA    User       @relation("user", fields: [userAId], references: [id], onDelete: Cascade)
+  userBId  String
+  userB    User       @relation("friend", fields: [userBId], references: [id], onDelete: Cascade)
+  messages Messages[]
 }
 
 model Messages {
-  id      String   @id @default(uuid())
-  message String?
-  image   String?
-  time    DateTime @default(now())
+  id         String      @id @default(uuid())
+  message    String?
+  image      String?
+  time       DateTime    @default(now())
+  sender     User        @relation("sender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId   String
+  receiver   User        @relation("receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String
+  contact    FriendsList @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId  String
 }

@@ -3,19 +3,82 @@ const prisma = new PrismaClient();
 
 async function sendRequest(req, res) {
   const { requestId } = req.body;
-  const id1 = "1af38ddf-b90f-4816-b0c3-594300b31ae8";
+  const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
+
+  if (typeof requestId === "undefined") {
+    res.status(400).json({
+      status: "failed",
+      message: "received invalid credentials",
+      data: null,
+    });
+    return;
+  }
 
   try {
-    const data = await prisma.requests.create({
-      data: {
-        userAID: id1,
-        userBID: requestId,
+    const checkFriendsList = await prisma.friendsList.findFirst({
+      where: {
+        OR: [
+          {
+            userAId: id1,
+            userBId: requestId,
+          },
+          {
+            userAId: requestId,
+            userBId: id1,
+          },
+        ],
       },
     });
 
-    res.json({ message: "all users", data: data });
+    if (checkFriendsList) {
+      res.status(403).json({
+        status: "failed",
+        message: "user is already available in the friends list",
+        data: null,
+      });
+      return;
+    }
+
+    const checkRequest = await prisma.requests.findFirst({
+      where: {
+        OR: [
+          {
+            userAId: id1,
+            userBId: requestId,
+          },
+          {
+            userAId: requestId,
+            userBId: id1,
+          },
+        ],
+      },
+    });
+
+    if (checkRequest) {
+      res.status(403).json({
+        status: "failed",
+        message: "friend request already sent",
+        data: null,
+      });
+      return;
+    }
+
+    const data = await prisma.requests.create({
+      data: {
+        userAId: id1,
+        userBId: requestId,
+      },
+    });
+
+    res.json({
+      status: "success",
+      message: "request sent successfully",
+      data: data,
+    });
   } catch (error) {
-    res.status(503).json({ error: "Internal server error" });
+    res
+      .status(503)
+      .json({ status: "failed", message: "Internal server error", data: null });
   }
 }
 

@@ -3,15 +3,57 @@ const prisma = new PrismaClient();
 
 async function addFriend(req, res) {
   const { requestId } = req.body;
-  const id1 = "1af38ddf-b90f-4816-b0c3-594300b31ae8";
+  const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
+
+  if (typeof requestId === "undefined") {
+    res.status(400).json({
+      status: "failed",
+      message: "received invalid credentials",
+      data: null,
+    });
+    return;
+  }
 
   try {
-    const deleteRequest = await prisma.requests.findFirst({
+    const checkFriendsList = await prisma.friendsList.findFirst({
       where: {
-        userAID: id1,
-        userBID: requestId,
+        OR: [
+          {
+            userAId: id1,
+            userBId: requestId,
+          },
+          {
+            userAId: requestId,
+            userBId: id1,
+          },
+        ],
       },
     });
+
+    if (checkFriendsList) {
+      res.status(403).json({
+        status: "failed",
+        message: "user is already available in the friends list",
+        data: null,
+      });
+      return;
+    }
+
+    const deleteRequest = await prisma.requests.findFirst({
+      where: {
+        userAId: id1,
+        userBId: requestId,
+      },
+    });
+
+    if (!deleteRequest) {
+      res.status(403).json({
+        status: "failed",
+        message: "send request to add user to friends list",
+        data: null,
+      });
+      return;
+    }
 
     await prisma.requests.delete({
       where: {
@@ -21,16 +63,22 @@ async function addFriend(req, res) {
 
     const data = await prisma.friendsList.create({
       data: {
-        userAID: id1,
-        userBID: requestId,
+        userAId: id1,
+        userBId: requestId,
       },
     });
 
-    res.json({ message: "all users", data: data });
+    res.json({
+      status: "success",
+      message: "User added to friends list",
+      data: data,
+    });
   } catch (error) {
     console.log(error);
 
-    res.status(503).json({ error: "Internal server error" });
+    res
+      .status(503)
+      .json({ status: "failed", message: "Internal server error", data: null });
   }
 }
 

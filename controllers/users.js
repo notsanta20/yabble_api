@@ -2,34 +2,35 @@ const { PrismaClient } = require("../prisma/generated/prisma/client");
 const prisma = new PrismaClient();
 
 async function users(req, res) {
-  const id1 = "1af38ddf-b90f-4816-b0c3-594300b31ae8";
-  const id2 = "c2909452-a894-4fcd-89bf-0ccfe60192d8";
+  const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
+  const id2 = "c4ab95a0-2347-4901-8403-8415690b4a08";
+
   try {
     const data = await prisma.user.findMany({
       where: {
         NOT: {
-          id: id2,
+          id: id1,
         },
       },
       include: {
         userRequests: {
           where: {
-            userBID: id2,
+            userBId: id1,
           },
         },
         myRequests: {
           where: {
-            userAID: id2,
+            userAId: id1,
           },
         },
         myFriends: {
           where: {
-            userBID: id2,
+            userBId: id1,
           },
         },
         followers: {
           where: {
-            userAID: id2,
+            userAId: id1,
           },
         },
       },
@@ -41,9 +42,13 @@ async function users(req, res) {
       }
     });
 
-    res.json({ message: "all users", data: filteredData });
+    res.json({ status: "success", message: "all users", data: filteredData });
   } catch (error) {
-    res.status(503).json({ error: "Internal server error" });
+    console.log(error);
+
+    res
+      .status(503)
+      .json({ status: "failed", message: "Internal server error", data: null });
   }
 }
 
