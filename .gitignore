@@ -26,3 +26,4 @@ dist-ssr
 db/uploads
 controllers/test.js
 prisma/generated/
+*.todo

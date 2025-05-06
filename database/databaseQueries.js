@@ -134,6 +134,33 @@ async function createMessage(userId, receiverId, contact) {
   return data;
 }
 
+async function createUser(username, email, salt, hash) {
+  const data = await prisma.user.create({
+    data: {
+      username: username,
+      email: email,
+      salt: salt,
+      hash: hash,
+      isActive: false,
+    },
+  });
+
+  return data;
+}
+
+async function updateOnlineStatus(userId, isActive) {
+  const data = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      isActive: isActive,
+    },
+  });
+
+  return data;
+}
+
 module.exports = {
   getUsers,
   getSingleUser,
@@ -144,4 +171,6 @@ module.exports = {
   deleteRequest,
   getMessages,
   createMessage,
+  createUser,
+  updateOnlineStatus,
 };
