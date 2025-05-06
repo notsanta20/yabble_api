@@ -1,5 +1,4 @@
-const { PrismaClient } = require("../prisma/generated/prisma/client");
-const prisma = new PrismaClient();
+const database = require("../database/databaseQueries");
 
 async function addFriend(req, res) {
   const { requestId } = req.body;
@@ -15,20 +14,7 @@ async function addFriend(req, res) {
   }
 
   try {
-    const checkFriendsList = await prisma.friendsList.findFirst({
-      where: {
-        OR: [
-          {
-            userAId: id1,
-            userBId: requestId,
-          },
-          {
-            userAId: requestId,
-            userBId: id1,
-          },
-        ],
-      },
-    });
+    const checkFriendsList = await database.checkFriendsList(id1, requestId);
 
     if (checkFriendsList) {
       res.status(403).json({
@@ -39,14 +25,9 @@ async function addFriend(req, res) {
       return;
     }
 
-    const deleteRequest = await prisma.requests.findFirst({
-      where: {
-        userAId: id1,
-        userBId: requestId,
-      },
-    });
+    const request = await database.checkRequest(id1, requestId);
 
-    if (!deleteRequest) {
+    if (!request) {
       res.status(403).json({
         status: "failed",
         message: "send request to add user to friends list",
@@ -55,18 +36,9 @@ async function addFriend(req, res) {
       return;
     }
 
-    await prisma.requests.delete({
-      where: {
-        id: deleteRequest.id,
-      },
-    });
+    await database.deleteRequest(request);
 
-    const data = await prisma.friendsList.create({
-      data: {
-        userAId: id1,
-        userBId: requestId,
-      },
-    });
+    const data = await database.addFriend(id1, requestId);
 
     res.json({
       status: "success",

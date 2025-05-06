@@ -1,9 +1,9 @@
 const express = require("express");
 const app = express();
-const message = require("../controllers/message");
-const getMessage = require("../controllers/getMessage");
+const messages = require("../controllers/messages");
+const getMessages = require("../controllers/getMessages");
 
-app.post("/message", message);
-app.get("/message/:receiverId", getMessage);
+app.post("/messages", messages);
+app.get("/messages/:receiverId", getMessages);
 
 module.exports = app;

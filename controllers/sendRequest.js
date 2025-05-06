@@ -1,8 +1,8 @@
-const { PrismaClient } = require("../prisma/generated/prisma/client");
-const prisma = new PrismaClient();
+const database = require("../database/databaseQueries");
 
 async function sendRequest(req, res) {
   const { requestId } = req.body;
+
   const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
 
   if (typeof requestId === "undefined") {
@@ -15,11 +15,7 @@ async function sendRequest(req, res) {
   }
 
   try {
-    const verifyUser = await prisma.user.findFirst({
-      where: {
-        id: requestId,
-      },
-    });
+    const verifyUser = await database.getSingleUser(requestId);
 
     if (!verifyUser) {
       res
@@ -28,20 +24,7 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const checkFriendsList = await prisma.friendsList.findFirst({
-      where: {
-        OR: [
-          {
-            userAId: id1,
-            userBId: requestId,
-          },
-          {
-            userAId: requestId,
-            userBId: id1,
-          },
-        ],
-      },
-    });
+    const checkFriendsList = await database.checkFriendsList(id1, requestId);
 
     if (checkFriendsList) {
       res.status(403).json({
@@ -52,20 +35,7 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const checkRequest = await prisma.requests.findFirst({
-      where: {
-        OR: [
-          {
-            userAId: id1,
-            userBId: requestId,
-          },
-          {
-            userAId: requestId,
-            userBId: id1,
-          },
-        ],
-      },
-    });
+    const checkRequest = await database.checkRequest(id1, requestId);
 
     if (checkRequest) {
       res.status(403).json({
@@ -76,12 +46,7 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const data = await prisma.requests.create({
-      data: {
-        userAId: id1,
-        userBId: requestId,
-      },
-    });
+    const data = await database.createRequest(id1, requestId);
 
     res.json({
       status: "success",

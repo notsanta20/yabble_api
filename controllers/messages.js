@@ -1,7 +1,6 @@
-const { PrismaClient } = require("../prisma/generated/prisma/client");
-const prisma = new PrismaClient();
+const database = require("../database/databaseQueries");
 
-async function message(req, res) {
+async function messages(req, res) {
   let { receiverId, message, image } = req.body;
   const id1 = "c4ab95a0-2347-4901-8403-8415690b4a08";
 
@@ -32,22 +31,9 @@ async function message(req, res) {
   }
 
   try {
-    const contactId = await prisma.friendsList.findFirst({
-      where: {
-        OR: [
-          {
-            userAId: id1,
-            userBId: receiverId,
-          },
-          {
-            userAId: receiverId,
-            userBId: id1,
-          },
-        ],
-      },
-    });
+    const contact = await database.checkFriendsList(id1, receiverId);
 
-    if (!contactId) {
+    if (!contact) {
       res.status(403).json({
         status: "failed",
         message: "User is not in your friend list, send request to message",
@@ -55,13 +41,7 @@ async function message(req, res) {
       return;
     }
 
-    const data = await prisma.messages.create({
-      data: {
-        senderId: id1,
-        receiverId: receiverId,
-        contactId: contactId.id,
-      },
-    });
+    const data = await database.createMessage(id1, receiverId, contact);
 
     res.json({
       status: "success",
@@ -77,4 +57,4 @@ async function message(req, res) {
   }
 }
 
-module.exports = message;
+module.exports = messages;

@@ -1,9 +1,9 @@
-const { PrismaClient } = require("../prisma/generated/prisma/client");
-const prisma = new PrismaClient();
+const database = require("../database/databaseQueries");
 
-async function getMessage(req, res) {
+async function getMessages(req, res) {
   const { receiverId } = req.params;
-  const id1 = "c4ab95a0-2347-4901-8403-8415690b4a08";
+  const id1 = "100b1539-21a7-40e2-8367-d3a271541c21";
+  const id2 = "c4ab95a0-2347-4901-8403-8415690b4a08";
 
   if (typeof receiverId === "undefined") {
     res.status(400).json({
@@ -15,22 +15,9 @@ async function getMessage(req, res) {
   }
 
   try {
-    const contactId = await prisma.friendsList.findFirst({
-      where: {
-        OR: [
-          {
-            userAId: id1,
-            userBId: receiverId,
-          },
-          {
-            userAId: receiverId,
-            userBId: id1,
-          },
-        ],
-      },
-    });
+    const contact = await database.checkFriendsList(id1, receiverId);
 
-    if (!contactId) {
+    if (!contact) {
       res.status(403).json({
         status: "failed",
         message: "User is not in your friend list, send request to message",
@@ -38,11 +25,7 @@ async function getMessage(req, res) {
       return;
     }
 
-    const data = await prisma.messages.findMany({
-      where: {
-        contactId: contactId.id,
-      },
-    });
+    const data = await database.getMessages(contact);
 
     res.json({
       status: "success",
@@ -58,4 +41,4 @@ async function getMessage(req, res) {
   }
 }
 
-module.exports = getMessage;
+module.exports = getMessages;
