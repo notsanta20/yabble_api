@@ -1,8 +1,7 @@
 const database = require("../database/databaseQueries");
 
 async function sendRequest(req, res) {
-  const { requestId } = req.body;
-  const userId = req.user.id;
+  const { receiverId } = req.body;
 
   if (!req.auth) {
     res.status(401).json({
@@ -13,7 +12,7 @@ async function sendRequest(req, res) {
     return;
   }
 
-  if (typeof requestId === "undefined") {
+  if (typeof receiverId === "undefined") {
     res.status(400).json({
       status: "failed",
       message: "received invalid credentials",
@@ -24,7 +23,8 @@ async function sendRequest(req, res) {
   }
 
   try {
-    const verifyUser = await database.getSingleUser(requestId);
+    const userId = req.user.id;
+    const verifyUser = await database.getSingleUser(receiverId);
 
     if (!verifyUser) {
       res.status(400).json({
@@ -36,7 +36,10 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const checkFriendsList = await database.checkFriendsList(userId, requestId);
+    const checkFriendsList = await database.checkFriendsList(
+      userId,
+      receiverId
+    );
 
     if (checkFriendsList) {
       res.status(403).json({
@@ -48,7 +51,7 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const checkRequest = await database.checkRequest(userId, requestId);
+    const checkRequest = await database.checkRequest(userId, receiverId);
 
     if (checkRequest) {
       res.status(403).json({
@@ -60,12 +63,12 @@ async function sendRequest(req, res) {
       return;
     }
 
-    const data = await database.createRequest(userId, requestId);
+    const data = await database.createRequest(userId, receiverId);
 
     res.json({
       status: "success",
       message: "request sent successfully",
-      data: data,
+      data: null,
       auth: req.auth,
     });
   } catch (error) {

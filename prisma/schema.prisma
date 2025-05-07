@@ -20,8 +20,8 @@ model User {
   Posts           Posts[]
   Likes           Likes[]
   Comments        Comments[]
-  userRequests    Requests[]    @relation("userA")
-  myRequests      Requests[]    @relation("userB")
+  myRequests      Requests[]    @relation("userA")
+  userRequests    Requests[]    @relation("userB")
   myFriends       FriendsList[] @relation("user")
   followers       FriendsList[] @relation("friend")
   messageSent     Messages[]    @relation("sender")

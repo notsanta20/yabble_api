@@ -6,6 +6,15 @@ const { ZodError } = require("zod");
 async function signup(req, res) {
   const { username, password, email } = req.body;
 
+  if (req.auth) {
+    res.status(403).json({
+      status: "failed",
+      message: "you are already logged in.",
+      auth: req.auth,
+    });
+    return;
+  }
+
   if (
     typeof username === "undefined" ||
     typeof password === "undefined" ||

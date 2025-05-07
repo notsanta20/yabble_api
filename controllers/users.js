@@ -1,8 +1,6 @@
 const database = require("../database/databaseQueries");
 
 async function users(req, res) {
-  const userId = req.user.id;
-
   if (!req.auth) {
     res.status(401).json({
       status: "unauthorized",
@@ -13,6 +11,7 @@ async function users(req, res) {
   }
 
   try {
+    const userId = req.user.id;
     const data = await database.getUsers(userId);
 
     const filteredData = data.filter((user) => {

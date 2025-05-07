@@ -8,6 +8,15 @@ require("dotenv").config();
 async function login(req, res) {
   const { username, password } = req.body;
 
+  if (req.auth) {
+    res.status(403).json({
+      status: "failed",
+      message: "you are already logged in.",
+      auth: req.auth,
+    });
+    return;
+  }
+
   if (typeof username === "undefined" || typeof password === "undefined") {
     res.status(400).json({
       status: "failed",
@@ -69,7 +78,6 @@ async function login(req, res) {
       secret,
       { expiresIn: "1d" },
       (error, data) => {
-        console.log("yes");
         if (error) {
           res.status(500).json({
             status: "failed",

@@ -1,8 +1,7 @@
 const database = require("../database/databaseQueries");
 
 async function addFriend(req, res) {
-  const { requestId } = req.body;
-  const userId = req.user.id;
+  const { receiverId } = req.body;
 
   if (!req.auth) {
     res.status(401).json({
@@ -13,7 +12,7 @@ async function addFriend(req, res) {
     return;
   }
 
-  if (typeof requestId === "undefined") {
+  if (typeof receiverId === "undefined") {
     res.status(400).json({
       status: "failed",
       message: "received invalid credentials",
@@ -24,7 +23,11 @@ async function addFriend(req, res) {
   }
 
   try {
-    const checkFriendsList = await database.checkFriendsList(userId, requestId);
+    const userId = req.user.id;
+    const checkFriendsList = await database.checkFriendsList(
+      userId,
+      receiverId
+    );
 
     if (checkFriendsList) {
       res.status(403).json({
@@ -36,7 +39,7 @@ async function addFriend(req, res) {
       return;
     }
 
-    const request = await database.checkRequest(userId, requestId);
+    const request = await database.checkRequest(userId, receiverId);
 
     if (!request) {
       res.status(403).json({
@@ -50,7 +53,7 @@ async function addFriend(req, res) {
 
     await database.deleteRequest(request);
 
-    const data = await database.addFriend(userId, requestId);
+    const data = await database.addFriend(userId, receiverId);
 
     res.json({
       status: "success",

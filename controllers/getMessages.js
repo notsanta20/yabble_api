@@ -2,7 +2,6 @@ const database = require("../database/databaseQueries");
 
 async function getMessages(req, res) {
   const { receiverId } = req.params;
-  const userId = req.user.id;
 
   if (!req.auth) {
     res.status(401).json({
@@ -24,6 +23,7 @@ async function getMessages(req, res) {
   }
 
   try {
+    const userId = req.user.id;
     const contact = await database.checkFriendsList(userId, receiverId);
 
     if (!contact) {

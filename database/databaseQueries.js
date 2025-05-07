@@ -9,12 +9,12 @@ async function getUsers(userId) {
       },
     },
     include: {
-      userRequests: {
+      myRequests: {
         where: {
           userBId: userId,
         },
       },
-      myRequests: {
+      userRequests: {
         where: {
           userAId: userId,
         },
@@ -39,6 +39,9 @@ async function getSingleUser(userId) {
   const data = await prisma.user.findFirst({
     where: {
       id: userId,
+    },
+    include: {
+      userRequests: true,
     },
   });
 
