@@ -13,6 +13,7 @@ async function login(req, res) {
       status: "failed",
       message: "received invalid credentials",
       data: null,
+      auth: req.auth,
     });
     return;
   }
@@ -26,7 +27,6 @@ async function login(req, res) {
     if (isValidInput) {
       throw isValidInput;
     }
-
     const userData = await database.getLoginUser(username);
 
     if (!userData) {
@@ -34,6 +34,7 @@ async function login(req, res) {
         status: "failed",
         message: "username does not exits",
         data: null,
+        auth: req.auth,
       });
 
       return;
@@ -51,40 +52,49 @@ async function login(req, res) {
         status: "failed",
         message: "password is not matching",
         data: null,
+        auth: req.auth,
       });
 
       return;
     }
 
-    const user = {
+    const tokenData = {
       id: userData.id,
       username: userData.username,
     };
-    const secret = process.env.ACCESS.TOKEN.SECRET;
+    const secret = process.env.ACCESS_TOKEN_SECRET;
 
-    jwt.sign(user, secret, { expiresIn: "1d" }, (error, data) => {
-      if (error) {
-        res.status(500).json({
-          status: "failed",
-          message: "Internal server error in generating token",
-          token: null,
+    jwt.sign(
+      { user: tokenData },
+      secret,
+      { expiresIn: "1d" },
+      (error, data) => {
+        console.log("yes");
+        if (error) {
+          res.status(500).json({
+            status: "failed",
+            message: "Internal server error in generating token",
+            token: null,
+            auth: req.auth,
+          });
+          return;
+        }
+
+        res.json({
+          status: "success",
+          message: "logged in successfully",
+          token: data,
+          auth: req.auth,
         });
-        return;
       }
-
-      console.log(data);
-      res.json({
-        status: "success",
-        message: "logged in successfully",
-        token: null,
-      });
-    });
+    );
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({
         status: "failed",
         message: "invalid credentials",
         data: error.issues,
+        auth: req.auth,
       });
     }
   }

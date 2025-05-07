@@ -15,6 +15,7 @@ async function signup(req, res) {
       status: "failed",
       message: "received invalid credentials",
       data: null,
+      auth: req.auth,
     });
     return;
   }
@@ -37,6 +38,7 @@ async function signup(req, res) {
         status: "failed",
         message: "username already exits",
         data: null,
+        auth: req.auth,
       });
 
       return;
@@ -50,6 +52,7 @@ async function signup(req, res) {
       status: "success",
       message: "Signed in successfully",
       data: null,
+      auth: req.auth,
     });
   } catch (error) {
     if (error instanceof ZodError) {
@@ -57,6 +60,7 @@ async function signup(req, res) {
         status: "failed",
         message: "invalid credentials",
         data: error.issues,
+        auth: req.auth,
       });
     }
   }

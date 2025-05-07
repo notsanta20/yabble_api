@@ -16,14 +16,14 @@ function getToken(req, res, next) {
 
 function verifyToken(req, res, next) {
   const token = req.token;
-  const secret = process.env.ACCESS.TOKEN.SECRET;
+  const secret = process.env.ACCESS_TOKEN_SECRET;
 
   jwt.verify(token, secret, (error, data) => {
     if (error) {
       req.auth = false;
     } else {
       req.auth = true;
-      console.log(data);
+      req.user = data.user;
     }
   });
 

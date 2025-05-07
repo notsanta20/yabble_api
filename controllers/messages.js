@@ -2,13 +2,23 @@ const database = require("../database/databaseQueries");
 
 async function messages(req, res) {
   let { receiverId, message, image } = req.body;
-  const id1 = "c4ab95a0-2347-4901-8403-8415690b4a08";
+  const userId = req.user.id;
+
+  if (!req.auth) {
+    res.status(401).json({
+      status: "unauthorized",
+      message: "you are unauthorized, login.",
+      auth: req.auth,
+    });
+    return;
+  }
 
   if (typeof receiverId === "undefined") {
     res.status(400).json({
       status: "failed",
       message: "received invalid credentials",
       data: null,
+      auth: req.auth,
     });
     return;
   }
@@ -18,6 +28,7 @@ async function messages(req, res) {
       status: "failed",
       message: "Cannot send empty message",
       data: null,
+      auth: req.auth,
     });
     return;
   }
@@ -31,29 +42,34 @@ async function messages(req, res) {
   }
 
   try {
-    const contact = await database.checkFriendsList(id1, receiverId);
+    const contact = await database.checkFriendsList(userId, receiverId);
 
     if (!contact) {
       res.status(403).json({
         status: "failed",
         message: "User is not in your friend list, send request to message",
+        auth: req.auth,
       });
       return;
     }
 
-    const data = await database.createMessage(id1, receiverId, contact);
+    const data = await database.createMessage(userId, receiverId, contact);
 
     res.json({
       status: "success",
       message: "message sent successfully",
       data: data,
+      auth: req.auth,
     });
   } catch (error) {
     console.log(error);
 
-    res
-      .status(503)
-      .json({ status: "failed", message: "Internal server error", data: null });
+    res.status(503).json({
+      status: "failed",
+      message: "Internal server error",
+      data: null,
+      auth: req.auth,
+    });
   }
 }
 
