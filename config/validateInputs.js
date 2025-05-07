@@ -1,6 +1,6 @@
 const { z } = require("zod");
 
-const loginSchema = z.object({
+const signupSchema = z.object({
   username: z
     .string()
     .min(3, { message: "username must be at least 3 characters" })
@@ -15,11 +15,31 @@ const loginSchema = z.object({
     .email({ message: "enter a valid email" }),
 });
 
+const loginSchema = z.object({
+  username: z
+    .string()
+    .min(3, { message: "username must be at least 3 characters" })
+    .max(15, { message: "username must not be more than 15 characters" }),
+  password: z
+    .string()
+    .min(8, { message: "password must be at least 8 characters" })
+    .max(30, { message: "password should not be more than 30 characters" }),
+});
+
 const dataSchema = z.object({
   data: z.string(),
 });
 
-function validateCredentials(data) {
+function validateSignup(data) {
+  try {
+    signupSchema.parse(data);
+    return;
+  } catch (error) {
+    return error;
+  }
+}
+
+function validateLogin(data) {
   try {
     loginSchema.parse(data);
     return;
@@ -37,4 +57,4 @@ function validateData(data) {
   }
 }
 
-module.exports = { validateCredentials, validateData };
+module.exports = { validateSignup, validateLogin, validateData };

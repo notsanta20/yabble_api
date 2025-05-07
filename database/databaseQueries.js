@@ -45,6 +45,15 @@ async function getSingleUser(userId) {
   return data;
 }
 
+async function getLoginUser(username) {
+  const data = await prisma.user.findFirst({
+    where: {
+      username: username,
+    },
+  });
+  return data;
+}
+
 async function checkFriendsList(userId, requestId) {
   const data = await prisma.friendsList.findFirst({
     where: {
@@ -164,6 +173,7 @@ async function updateOnlineStatus(userId, isActive) {
 module.exports = {
   getUsers,
   getSingleUser,
+  getLoginUser,
   checkFriendsList,
   addFriend,
   checkRequest,

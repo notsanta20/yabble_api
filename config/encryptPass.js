@@ -17,7 +17,7 @@ function validateHash(username, password, salt, hash) {
     .pbkdf2Sync(userInfo, salt, 1000, 64, "sha512")
     .toString("hex");
 
-  return hash === validateHash;
+  return hash === verifyHash;
 }
 
 module.exports = { getHash, validateHash };
