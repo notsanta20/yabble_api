@@ -173,6 +173,18 @@ async function updateOnlineStatus(userId, isActive) {
   return data;
 }
 
+async function createPost(title, description, image) {
+  const data = await prisma.posts.create({
+    data: {
+      title: title,
+      description: description,
+      image: image,
+    },
+  });
+
+  return data;
+}
+
 module.exports = {
   getUsers,
   getSingleUser,
@@ -186,4 +198,5 @@ module.exports = {
   createMessage,
   createUser,
   updateOnlineStatus,
+  createPost,
 };

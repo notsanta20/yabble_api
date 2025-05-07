@@ -30,6 +30,12 @@ const dataSchema = z.object({
   data: z.string(),
 });
 
+const postSchema = z.object({
+  title: z.string().min(1, { message: "title must be at least 1 character" }),
+  description: z.string().nullable(),
+  image: z.string().nullable(),
+});
+
 function validateSignup(data) {
   try {
     signupSchema.parse(data);
@@ -57,4 +63,13 @@ function validateData(data) {
   }
 }
 
-module.exports = { validateSignup, validateLogin, validateData };
+function validatePost(data) {
+  try {
+    postSchema.parse(data);
+    return;
+  } catch (error) {
+    return error;
+  }
+}
+
+module.exports = { validateSignup, validateLogin, validateData, validatePost };

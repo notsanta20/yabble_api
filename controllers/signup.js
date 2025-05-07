@@ -71,7 +71,15 @@ async function signup(req, res) {
         data: error.issues,
         auth: req.auth,
       });
+      return;
     }
+
+    res.status(503).json({
+      status: "failed",
+      message: "Internal server error",
+      data: null,
+      auth: req.auth,
+    });
   }
 }
 
