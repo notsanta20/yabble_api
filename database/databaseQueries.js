@@ -173,12 +173,69 @@ async function updateOnlineStatus(userId, isActive) {
   return data;
 }
 
-async function createPost(title, description, image) {
+async function createPost(title, description, image, userId) {
   const data = await prisma.posts.create({
     data: {
       title: title,
       description: description,
       image: image,
+      userId: userId,
+    },
+  });
+
+  return data;
+}
+
+async function getAllPosts() {
+  const data = await prisma.posts.findMany({
+    include: {
+      _count: {
+        select: { Likes: true, Comments: true },
+      },
+    },
+  });
+
+  return data;
+}
+
+async function checkLike(userId, postId) {
+  const data = await prisma.likes.findFirst({
+    where: {
+      userId: userId,
+      postId: postId,
+    },
+  });
+
+  return data;
+}
+
+async function addLike(userId, postId) {
+  const data = await prisma.likes.create({
+    data: {
+      userId: userId,
+      postId: postId,
+    },
+  });
+
+  return data;
+}
+
+async function removeLike(likeId) {
+  const data = await prisma.likes.delete({
+    where: {
+      id: likeId,
+    },
+  });
+
+  return data;
+}
+
+async function addComment(comment, userId, postId) {
+  const data = await prisma.comments.create({
+    data: {
+      comment: comment,
+      userId: userId,
+      postId: postId,
     },
   });
 
@@ -199,4 +256,9 @@ module.exports = {
   createUser,
   updateOnlineStatus,
   createPost,
+  getAllPosts,
+  checkLike,
+  addLike,
+  removeLike,
+  addComment,
 };

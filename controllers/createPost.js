@@ -45,11 +45,11 @@ async function createPost(req, res) {
       throw validData;
     }
 
-    const post = await database.createPost(title, description, image);
+    const post = await database.createPost(title, description, image, userId);
 
     res.json({
       status: "success",
-      message: "User added to friends list",
+      message: "post added successfully",
       data: post,
     });
   } catch (error) {
