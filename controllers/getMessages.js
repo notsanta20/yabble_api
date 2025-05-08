@@ -39,7 +39,7 @@ async function getMessages(req, res) {
 
     res.json({
       status: "success",
-      message: "message fetched successfully",
+      message: "successfully fetched messages",
       data: data,
       auth: req.auth,
     });

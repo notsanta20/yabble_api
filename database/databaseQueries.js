@@ -8,7 +8,10 @@ async function getUsers(userId) {
         id: userId,
       },
     },
-    include: {
+    select: {
+      id: true,
+      username: true,
+      profilePic: true,
       myRequests: {
         where: {
           userBId: userId,
@@ -282,6 +285,83 @@ async function addComment(comment, userId, postId) {
   return data;
 }
 
+async function getActiveUsers(userId) {
+  const data = await prisma.user.findMany({
+    where: {
+      isActive: true,
+      NOT: {
+        id: userId,
+      },
+    },
+    select: {
+      id: true,
+      username: true,
+      profilePic: true,
+    },
+  });
+
+  return data;
+}
+
+async function setOnline(userId) {
+  const data = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      isActive: true,
+    },
+  });
+
+  return data;
+}
+
+async function setOffline(userId) {
+  const data = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      isActive: false,
+    },
+  });
+
+  return data;
+}
+
+async function getFriendsList(userId) {
+  const data = await prisma.user.findMany({
+    where: {
+      id: userId,
+    },
+    select: {
+      followers: {
+        include: {
+          userA: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true,
+            },
+          },
+        },
+      },
+      myFriends: {
+        include: {
+          userB: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  return data;
+}
+
 module.exports = {
   getUsers,
   getSingleUser,
@@ -302,4 +382,8 @@ module.exports = {
   addLike,
   removeLike,
   addComment,
+  getActiveUsers,
+  setOnline,
+  setOffline,
+  getFriendsList,
 };

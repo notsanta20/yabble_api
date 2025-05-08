@@ -72,6 +72,7 @@ async function login(req, res) {
       username: userData.username,
     };
     const secret = process.env.ACCESS_TOKEN_SECRET;
+    await database.setOnline(userData.id);
 
     jwt.sign(
       { user: tokenData },

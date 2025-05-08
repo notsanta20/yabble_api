@@ -27,7 +27,7 @@ async function getUsers(req, res) {
 
     res.json({
       status: "success",
-      message: "all users",
+      message: "successfully fetch user",
       data: data,
       auth: req.auth,
     });
