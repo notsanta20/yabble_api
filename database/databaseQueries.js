@@ -40,8 +40,15 @@ async function getSingleUser(userId) {
     where: {
       id: userId,
     },
-    include: {
+    select: {
+      id: true,
+      username: true,
+      profilePic: true,
+      bio: true,
       userRequests: true,
+      Posts: true,
+      Likes: true,
+      Comments: true,
     },
   });
 
@@ -198,6 +205,39 @@ async function getAllPosts() {
   return data;
 }
 
+async function getPost(postId) {
+  const data = await prisma.posts.findFirst({
+    where: {
+      id: postId,
+    },
+    include: {
+      _count: {
+        select: { Likes: true, Comments: true },
+      },
+      Comments: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          username: true,
+          profilePic: true,
+        },
+      },
+    },
+  });
+
+  return data;
+}
+
 async function checkLike(userId, postId) {
   const data = await prisma.likes.findFirst({
     where: {
@@ -257,6 +297,7 @@ module.exports = {
   updateOnlineStatus,
   createPost,
   getAllPosts,
+  getPost,
   checkLike,
   addLike,
   removeLike,

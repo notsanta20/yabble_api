@@ -15,7 +15,7 @@ async function getAllPosts(req, res) {
 
     res.json({
       status: "success",
-      message: "post added successfully",
+      message: "fetched all posts successfully",
       data: allPosts,
     });
   } catch (error) {
