@@ -38,6 +38,16 @@ async function getUsers(userId) {
   return data;
 }
 
+async function checkUser(username) {
+  const data = await prisma.user.findFirst({
+    where: {
+      username: username,
+    },
+  });
+
+  return data;
+}
+
 async function getSingleUser(userId) {
   const data = await prisma.user.findFirst({
     where: {
@@ -364,6 +374,7 @@ async function getFriendsList(userId) {
 
 module.exports = {
   getUsers,
+  checkUser,
   getSingleUser,
   getLoginUser,
   checkFriendsList,

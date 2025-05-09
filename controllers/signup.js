@@ -55,7 +55,19 @@ async function signup(req, res) {
 
     const { salt, hash } = encryptPass.getHash(username, password);
 
-    const data = await database.createUser(username, email, salt, hash);
+    const verifyUser = await database.checkUser(username);
+
+    if (verifyUser) {
+      res.status(401).json({
+        status: "failed",
+        message: "username already exists",
+        data: null,
+        auth: req.auth,
+      });
+      return;
+    }
+
+    await database.createUser(username, email, salt, hash);
 
     res.json({
       status: "success",
