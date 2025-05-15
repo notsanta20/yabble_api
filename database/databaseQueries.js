@@ -159,9 +159,71 @@ async function getSingleUser(userId, currentUser) {
           userAId: currentUser,
         },
       },
-      Posts: true,
-      Likes: true,
-      Comments: true,
+      Posts: {
+        include: {
+          _count: {
+            select: { Likes: true, Comments: true },
+          },
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true,
+            },
+          },
+          Likes: {
+            where: {
+              userId: userId,
+            },
+          },
+        },
+      },
+      Likes: {
+        include: {
+          Posts: {
+            include: {
+              _count: {
+                select: { Likes: true, Comments: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  profilePic: true,
+                },
+              },
+              Likes: {
+                where: {
+                  userId: userId,
+                },
+              },
+            },
+          },
+        },
+      },
+      Comments: {
+        include: {
+          Posts: {
+            include: {
+              _count: {
+                select: { Likes: true, Comments: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  profilePic: true,
+                },
+              },
+              Likes: {
+                where: {
+                  userId: userId,
+                },
+              },
+            },
+          },
+        },
+      },
     },
   });
 
@@ -489,6 +551,19 @@ async function getFriendsList(userId) {
   return data;
 }
 
+async function EditBio(userId, bio) {
+  const data = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      bio: bio,
+    },
+  });
+
+  return data;
+}
+
 module.exports = {
   getUsers,
   checkUser,
@@ -515,4 +590,5 @@ module.exports = {
   setOnline,
   setOffline,
   getFriendsList,
+  EditBio,
 };
