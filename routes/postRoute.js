@@ -10,6 +10,6 @@ app.post("/create-post", createPost);
 app.get("/posts", getAllPosts);
 app.get("/post/:postId", getPost);
 app.put("/post/like", postLike);
-app.put("/post/add-comment", addComment);
+app.put("/post/:postId/add-comment", addComment);
 
 module.exports = app;
