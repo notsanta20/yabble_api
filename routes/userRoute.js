@@ -8,6 +8,7 @@ const addFriend = require("../controllers/addFriend");
 const getFriendRequests = require("../controllers/getFriendRequests");
 const getFriendsList = require("../controllers/getFriendsList");
 const getActiveUsers = require("../controllers/getActiveUsers");
+const editUser = require("../controllers/editUser");
 const logoff = require("../controllers/logoff");
 
 app.get("/all-users", getAllUsers);
@@ -18,6 +19,7 @@ app.get("/friend-requests", getFriendRequests);
 app.post("/add-friend", addFriend);
 app.get("/friends-list", getFriendsList);
 app.get("/active-users", getActiveUsers);
+app.put("/edit-user", editUser);
 app.put("/logoff", logoff);
 
 module.exports = app;
