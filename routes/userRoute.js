@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const getAllUsers = require("../controllers/getAllUsers");
+const getCurrentUser = require("../controllers/getCurrentUser");
 const getUser = require("../controllers/getUser");
 const sendRequest = require("../controllers/sendRequest");
 const addFriend = require("../controllers/addFriend");
@@ -10,6 +11,7 @@ const getActiveUsers = require("../controllers/getActiveUsers");
 const logoff = require("../controllers/logoff");
 
 app.get("/all-users", getAllUsers);
+app.get("/current-user", getCurrentUser);
 app.get("/user/:userId", getUser);
 app.post("/send-request", sendRequest);
 app.get("/friend-requests", getFriendRequests);
