@@ -7,7 +7,6 @@ require("dotenv").config();
 
 async function login(req, res) {
   const { username, password } = req.body;
-
   if (req.auth) {
     res.status(403).json({
       status: "failed",
@@ -88,7 +87,6 @@ async function login(req, res) {
           });
           return;
         }
-
         res.json({
           status: "success",
           message: "logged in successfully",

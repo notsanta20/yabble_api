@@ -24,7 +24,6 @@ async function postLike(req, res) {
   try {
     const userId = req.user.id;
     const verifyLike = await database.checkLike(userId, postId);
-    console.log(verifyLike);
 
     if (verifyLike) {
       const removeLike = await database.removeLike(verifyLike.id);
