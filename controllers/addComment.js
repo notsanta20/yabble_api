@@ -1,7 +1,8 @@
 const database = require("../database/databaseQueries");
 
 async function addComment(req, res) {
-  const { comment, postId } = req.body;
+  const { comment } = req.body;
+  const { postId } = req.params;
 
   if (!req.auth) {
     res.status(401).json({
