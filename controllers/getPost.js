@@ -22,7 +22,8 @@ async function getAllPosts(req, res) {
   }
 
   try {
-    const post = await database.getPost(postId);
+    const userId = req.user.id;
+    const post = await database.getPost(postId, userId);
 
     res.json({
       status: "success",

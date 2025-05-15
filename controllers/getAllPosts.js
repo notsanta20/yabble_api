@@ -11,7 +11,7 @@ async function getAllPosts(req, res) {
   }
 
   try {
-    const allPosts = await database.getAllPosts();
+    const allPosts = await database.getAllPosts(req.user.id);
 
     res.json({
       status: "success",

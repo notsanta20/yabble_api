@@ -23,7 +23,8 @@ async function getUsers(req, res) {
   }
 
   try {
-    const data = await database.getSingleUser(userId);
+    const currentUser = req.user.id;
+    const data = await database.getSingleUser(userId, currentUser);
 
     res.json({
       status: "success",
