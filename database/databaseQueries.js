@@ -48,7 +48,7 @@ async function checkUser(username) {
   return data;
 }
 
-async function getSingleUser(userId) {
+async function getCurrentUser(userId) {
   const data = await prisma.user.findFirst({
     where: {
       id: userId,
@@ -58,7 +58,107 @@ async function getSingleUser(userId) {
       username: true,
       profilePic: true,
       bio: true,
-      userRequests: true,
+      Posts: {
+        include: {
+          _count: {
+            select: { Likes: true, Comments: true },
+          },
+          user: {
+            select: {
+              id: true,
+              username: true,
+              profilePic: true,
+            },
+          },
+          Likes: {
+            where: {
+              userId: userId,
+            },
+          },
+        },
+      },
+      Likes: {
+        include: {
+          Posts: {
+            include: {
+              _count: {
+                select: { Likes: true, Comments: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  profilePic: true,
+                },
+              },
+              Likes: {
+                where: {
+                  userId: userId,
+                },
+              },
+            },
+          },
+        },
+      },
+      Comments: {
+        include: {
+          Posts: {
+            include: {
+              _count: {
+                select: { Likes: true, Comments: true },
+              },
+              user: {
+                select: {
+                  id: true,
+                  username: true,
+                  profilePic: true,
+                },
+              },
+              Likes: {
+                where: {
+                  userId: userId,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return data;
+}
+
+async function getSingleUser(userId, currentUser) {
+  const data = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+    select: {
+      id: true,
+      username: true,
+      profilePic: true,
+      bio: true,
+      myRequests: {
+        where: {
+          userBId: currentUser,
+        },
+      },
+      userRequests: {
+        where: {
+          userAId: currentUser,
+        },
+      },
+      myFriends: {
+        where: {
+          userBId: currentUser,
+        },
+      },
+      followers: {
+        where: {
+          userAId: currentUser,
+        },
+      },
       Posts: true,
       Likes: true,
       Comments: true,
@@ -206,11 +306,23 @@ async function createPost(title, description, image, userId) {
   return data;
 }
 
-async function getAllPosts() {
+async function getAllPosts(userId) {
   const data = await prisma.posts.findMany({
     include: {
       _count: {
         select: { Likes: true, Comments: true },
+      },
+      user: {
+        select: {
+          id: true,
+          username: true,
+          profilePic: true,
+        },
+      },
+      Likes: {
+        where: {
+          userId: userId,
+        },
       },
     },
   });
@@ -218,7 +330,7 @@ async function getAllPosts() {
   return data;
 }
 
-async function getPost(postId) {
+async function getPost(postId, userId) {
   const data = await prisma.posts.findFirst({
     where: {
       id: postId,
@@ -243,6 +355,11 @@ async function getPost(postId) {
           id: true,
           username: true,
           profilePic: true,
+        },
+      },
+      Likes: {
+        where: {
+          userId: userId,
         },
       },
     },
@@ -375,6 +492,7 @@ async function getFriendsList(userId) {
 module.exports = {
   getUsers,
   checkUser,
+  getCurrentUser,
   getSingleUser,
   getLoginUser,
   checkFriendsList,

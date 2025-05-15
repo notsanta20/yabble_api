@@ -45,7 +45,7 @@ model Likes {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId String
-  post   Posts  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Posts  Posts  @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Comments {
@@ -55,7 +55,7 @@ model Comments {
   userId  String
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId  String
-  post    Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  Posts   Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Requests {
