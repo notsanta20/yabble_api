@@ -12,7 +12,9 @@ async function getActiveUsers(req, res) {
 
   try {
     const userId = req.user.id;
-    const data = await database.getActiveUsers(userId);
+    const time = new Date(Date.now() - 5 * 60 * 1000);
+
+    const data = await database.getActiveUsers(userId, time);
 
     res.json({
       status: "success",
