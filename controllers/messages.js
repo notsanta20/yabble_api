@@ -37,7 +37,7 @@ async function messages(req, res) {
   }
 
   if (typeof image === "undefined") {
-    message = null;
+    image = null;
   }
 
   try {
@@ -53,7 +53,12 @@ async function messages(req, res) {
       return;
     }
 
-    const data = await database.createMessage(userId, receiverId, contact);
+    const data = await database.createMessage(
+      userId,
+      receiverId,
+      contact,
+      message
+    );
 
     res.json({
       status: "success",
