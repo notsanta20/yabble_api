@@ -1,5 +1,3 @@
-const database = require("../database/databaseQueries");
-
 async function logoff(req, res) {
   if (!req.auth) {
     res.status(401).json({
@@ -11,9 +9,6 @@ async function logoff(req, res) {
   }
 
   try {
-    const userId = req.user.id;
-    const user = await database.setOffline(userId);
-
     res.json({
       status: "success",
       message: "logged off successfully",
