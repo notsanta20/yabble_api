@@ -67,7 +67,9 @@ async function signup(req, res) {
       return;
     }
 
-    await database.createUser(username, email, salt, hash);
+    const newUser = await database.createUser(username, email, salt, hash);
+
+    await database.createSession(newUser.id);
 
     res.json({
       status: "success",
