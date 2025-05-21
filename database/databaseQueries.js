@@ -317,12 +317,13 @@ async function getMessages(contact) {
   return data;
 }
 
-async function createMessage(userId, receiverId, contact) {
+async function createMessage(userId, receiverId, contact, message) {
   const data = await prisma.messages.create({
     data: {
       senderId: userId,
       receiverId: receiverId,
       contactId: contact.id,
+      message: message,
     },
   });
   return data;
@@ -335,20 +336,6 @@ async function createUser(username, email, salt, hash) {
       email: email,
       salt: salt,
       hash: hash,
-      isActive: false,
-    },
-  });
-
-  return data;
-}
-
-async function updateOnlineStatus(userId, isActive) {
-  const data = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      isActive: isActive,
     },
   });
 
@@ -474,44 +461,24 @@ async function addComment(comment, userId, postId) {
   return data;
 }
 
-async function getActiveUsers(userId) {
-  const data = await prisma.user.findMany({
+async function getActiveUsers(userId, time) {
+  const data = await prisma.session.findMany({
     where: {
-      isActive: true,
       NOT: {
-        id: userId,
+        userId: userId,
+      },
+      time: {
+        gte: time,
       },
     },
-    select: {
-      id: true,
-      username: true,
-      profilePic: true,
-    },
-  });
-
-  return data;
-}
-
-async function setOnline(userId) {
-  const data = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      isActive: true,
-    },
-  });
-
-  return data;
-}
-
-async function setOffline(userId) {
-  const data = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      isActive: false,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          profilePic: true,
+        },
+      },
     },
   });
 
@@ -564,6 +531,29 @@ async function EditBio(userId, bio) {
   return data;
 }
 
+async function createSession(userId) {
+  const data = await prisma.session.create({
+    data: {
+      userId: userId,
+    },
+  });
+
+  return data;
+}
+
+async function updateSession(userId, time) {
+  const data = await prisma.session.update({
+    where: {
+      userId: userId,
+    },
+    data: {
+      time: time,
+    },
+  });
+
+  return data;
+}
+
 module.exports = {
   getUsers,
   checkUser,
@@ -578,7 +568,6 @@ module.exports = {
   getMessages,
   createMessage,
   createUser,
-  updateOnlineStatus,
   createPost,
   getAllPosts,
   getPost,
@@ -587,8 +576,8 @@ module.exports = {
   removeLike,
   addComment,
   getActiveUsers,
-  setOnline,
-  setOffline,
   getFriendsList,
   EditBio,
+  createSession,
+  updateSession,
 };
