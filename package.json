@@ -20,11 +20,14 @@
   "homepage": "https://github.com/notsanta20/yabble_api#readme",
   "dependencies": {
     "@prisma/client": "^6.8.2",
-    "@supabase/supabase-js": "^2.49.4",
+    "base64-arraybuffer": "^1.0.2",
+    "cloudinary": "^2.6.1",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
