@@ -5,8 +5,9 @@ const getAllPosts = require("../controllers/getAllPosts");
 const getPost = require("../controllers/getPost");
 const postLike = require("../controllers/postLike");
 const addComment = require("../controllers/addComment");
+const uploads = require("../config/MulterUploads");
 
-app.post("/create-post", createPost);
+app.post("/create-post", uploads.single("img"), createPost);
 app.get("/posts", getAllPosts);
 app.get("/post/:postId", getPost);
 app.put("/post/like", postLike);
