@@ -1,9 +1,12 @@
 const database = require("../database/databaseQueries");
 const validateInputs = require("../config/validateInputs");
 const { ZodError } = require("zod");
+const { cloudinaryUpload } = require("../config/cloudinary");
+const removeFile = require("../config/removeFile");
 
 async function createPost(req, res) {
-  let { title, description, image } = req.body;
+  let { title, description } = req.body;
+  let img = req.file;
 
   if (!req.auth) {
     res.status(401).json({
@@ -24,28 +27,39 @@ async function createPost(req, res) {
     return;
   }
 
-  if (typeof description === "undefined") {
+  if (typeof description === "") {
     description = null;
   }
 
-  if (typeof image === "undefined") {
-    image = null;
+  if (typeof img === "undefined") {
+    img = null;
   }
 
   try {
     const userId = req.user.id;
+    let imgLink = null;
 
     const validData = validateInputs.validatePost({
       title: title,
       description: description,
-      image: image,
     });
 
     if (validData) {
       throw validData;
     }
 
-    const post = await database.createPost(title, description, image, userId);
+    if (img) {
+      imgLink = await cloudinaryUpload("post", userId, img.path);
+      await removeFile(img.path);
+    }
+
+    const post = await database.createPost(
+      title,
+      description,
+      imgLink.url,
+      userId
+    );
+    console.log(post);
 
     res.json({
       status: "success",
@@ -53,6 +67,8 @@ async function createPost(req, res) {
       data: post,
     });
   } catch (error) {
+    console.log(error);
+
     if (error instanceof ZodError) {
       res.status(400).json({
         status: "failed",
