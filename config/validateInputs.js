@@ -33,7 +33,6 @@ const dataSchema = z.object({
 const postSchema = z.object({
   title: z.string().min(1, { message: "title must be at least 1 character" }),
   description: z.string().nullable(),
-  image: z.string().nullable(),
 });
 
 function validateSignup(data) {
