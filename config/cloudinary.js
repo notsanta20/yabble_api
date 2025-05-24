@@ -1,9 +1,10 @@
 const { v2 } = require("cloudinary");
+require("dotenv").config();
 
 v2.config({
-  cloud_name: "dnhwtmeya",
-  api_key: "561169522715425",
-  api_secret: "FWvqNt28qDVgqb-dRBGo6-pjA4U",
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 // Upload an image
