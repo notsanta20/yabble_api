@@ -518,13 +518,14 @@ async function getFriendsList(userId) {
   return data;
 }
 
-async function EditBio(userId, bio) {
+async function EditBio(userId, bio, image) {
   const data = await prisma.user.update({
     where: {
       id: userId,
     },
     data: {
       bio: bio,
+      profilePic: image,
     },
   });
 
