@@ -16,7 +16,6 @@ module.exports = (server) => {
   //middleware to get user details from token
   io.use((socket, next) => {
     const { token } = socket.handshake.auth;
-
     const userData = getUserDetails(token);
 
     if (typeof userData === "undefined") {
