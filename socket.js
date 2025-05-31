@@ -88,10 +88,13 @@ module.exports = (server) => {
     //get all messages
     socket.on("getMessage", async (receiverId) => {
       try {
-        const messages = await getMessages(socket.userId, receiverId);
+        const { data, receiverData } = await getMessages(
+          socket.userId,
+          receiverId
+        );
 
         //emit messages to client
-        socket.emit("receiveMessages", messages);
+        socket.emit("receiveMessages", data, receiverData);
       } catch (error) {
         socket.emit("error", "failed to fetch messages");
       }
