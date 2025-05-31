@@ -50,16 +50,11 @@ async function createPost(req, res) {
 
     if (img) {
       imgLink = await cloudinaryUpload("post", userId, img.path);
+      imgLink = imgLink.url;
       await removeFile(img.path);
     }
 
-    const post = await database.createPost(
-      title,
-      description,
-      imgLink.url,
-      userId
-    );
-    console.log(post);
+    const post = await database.createPost(title, description, imgLink, userId);
 
     res.json({
       status: "success",

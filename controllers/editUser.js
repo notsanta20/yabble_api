@@ -35,9 +35,14 @@ async function editUser(req, res) {
         await deleteFolder(userId);
       }
       imgLink = await cloudinaryUpload("profile", userId, img.path);
+      imgLink = imgLink.url;
       await removeFile(img.path);
+    } else {
+      if (userData.profilePic) {
+        imgLink = userData.profilePic;
+      }
     }
-    await database.EditBio(userId, bio, imgLink.url);
+    await database.EditBio(userId, bio, imgLink);
 
     res.json({
       status: "success",

@@ -17,6 +17,7 @@ async function getAllPosts(req, res) {
       status: "success",
       message: "fetched all posts successfully",
       data: allPosts,
+      auth: req.auth,
     });
   } catch (error) {
     res.status(503).json({

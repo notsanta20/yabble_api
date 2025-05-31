@@ -317,13 +317,14 @@ async function getMessages(contact) {
   return data;
 }
 
-async function createMessage(userId, receiverId, contact, message) {
+async function createMessage(userId, receiverId, contact, message, image) {
   const data = await prisma.messages.create({
     data: {
       senderId: userId,
       receiverId: receiverId,
       contactId: contact.id,
       message: message,
+      image: image,
     },
   });
   return data;
