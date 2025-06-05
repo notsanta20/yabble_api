@@ -3,6 +3,7 @@ const getMessages = require("./utils/getMessages");
 const getFriendsList = require("./utils/getFriendsList");
 const sendMessage = require("./utils/sendMessage");
 const getUserDetails = require("./utils/getUserDetails");
+const { validateData } = require("./config/validateInputs");
 
 let io;
 
@@ -120,16 +121,22 @@ module.exports = (server) => {
       }
 
       try {
-        const messageData = await sendMessage(
-          socket.userId,
-          userId,
-          message,
-          image
-        );
+        const validateMessage = validateData({ data: message });
 
-        //emit saved message to client
-        if (messageData) {
-          socket.to(userId).to(socket.id).emit("receive", messageData);
+        if (validateMessage) {
+          socket.emit("error", "received invalid inputs");
+        } else {
+          const messageData = await sendMessage(
+            socket.userId,
+            userId,
+            message,
+            image
+          );
+
+          //emit saved message to client
+          if (messageData) {
+            socket.to(userId).to(socket.id).emit("receive", messageData);
+          }
         }
       } catch (error) {
         socket.emit("error", "failed to send message, try again");
