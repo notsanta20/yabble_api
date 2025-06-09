@@ -2,7 +2,6 @@ const database = require("../database/databaseQueries");
 const validateInputs = require("../config/validateInputs");
 const { ZodError } = require("zod");
 const { cloudinaryUpload } = require("../config/cloudinary");
-const removeFile = require("../config/removeFile");
 
 async function createPost(req, res) {
   let { title, description } = req.body;
@@ -51,7 +50,6 @@ async function createPost(req, res) {
     if (img) {
       imgLink = await cloudinaryUpload("post", userId, img.path);
       imgLink = imgLink.url;
-      await removeFile(img.path);
     }
 
     const post = await database.createPost(title, description, imgLink, userId);
