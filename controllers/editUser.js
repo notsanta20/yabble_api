@@ -1,6 +1,5 @@
 const database = require("../database/databaseQueries");
 const { cloudinaryUpload, deleteFolder } = require("../config/cloudinary");
-const removeFile = require("../config/removeFile");
 
 async function editUser(req, res) {
   const { bio } = req.body;
@@ -34,9 +33,10 @@ async function editUser(req, res) {
       if (userData.profilePic) {
         await deleteFolder(userId);
       }
-      imgLink = await cloudinaryUpload("profile", userId, img.path);
+      const b64 = Buffer.from(img.buffer).toString("base64");
+      let dataURI = "data:" + img.mimetype + ";base64," + b64;
+      imgLink = await cloudinaryUpload("post", userId, dataURI);
       imgLink = imgLink.url;
-      await removeFile(img.path);
     } else {
       if (userData.profilePic) {
         imgLink = userData.profilePic;
