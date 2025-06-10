@@ -10,7 +10,7 @@ let io;
 module.exports = (server) => {
   io = new Server(server, {
     cors: {
-      origin: "https://yabble.vercel.app/",
+      origin: "https://yabble.vercel.app",
     },
   });
 
